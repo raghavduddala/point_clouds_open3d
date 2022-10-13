@@ -21,20 +21,31 @@ import matplotlib.pyplot as plt
 
 pcd = o3d.io.read_point_cloud("/workspace/src/point_clouds_open3d/my_velodyne.pcd")
 print(pcd)
-o3d.visualization.draw_geometries([pcd])
+# o3d.visualization.draw_geometries([pcd])
 
 ## IF YOU HAVE PPTK INSTALLED, VISUALIZE USING PPTK
 # import pptk
 # v = pptk.viewer(pcd.points)
 
-# ## CHALLENGE 2 - VOXEL GRID DOWNSAMPLING
-# print(f"Points before downsampling: {len(pcd.points)} ")
-# pcd =
-# print(f"Points after downsampling: {len(pcd.points)}")# DOWNSAMPLING
-
+## CHALLENGE 2 - VOXEL GRID DOWNSAMPLING
+print(f"Points before downsampling: {len(pcd.points)} ")
+# TODO(RD): Will have to figure out what is the voxel size unit - should probably in metres.
+# Voxel size has to be carefully picked up as the distance between each point cloud point from the LiDAR is also important
+# Some possibility that we might miss small obstacles at distance to the LiDAR,
+pcd = pcd.voxel_down_sample(voxel_size=0.05)
+print(f"Points after downsampling: {len(pcd.points)}")  # DOWNSAMPLING
+print(np.asarray(pcd.points))
+# o3d.visualization.draw_geometries([pcd])
 
 # ## CHALLENGE 3 - SEGMENTATION
-# _, inliers =
+# #TODO(RD): For 1000 iterationsm it took some time like around atleast a second, so probably need to do time analysis here or may be use
+# GPU version with the Nvidia GPU
+_, inliers = pcd.segment_plane(distance_threshold=0.1, ransac_n=3, num_iterations=1000)
+inlier_cloud = pcd.select_by_index(inliers)
+inlier_cloud.paint_uniform_color([0, 0, 0])
+outlier_cloud = pcd.select_by_index(inliers, invert=True)
+outlier_cloud.paint_uniform_color([1, 0, 0])
+o3d.visualization.draw_geometries([inlier_cloud, outlier_cloud])
 
 # ## CHALLENGE 4 - CLUSTERING USING DBSCAN
 # labels =
