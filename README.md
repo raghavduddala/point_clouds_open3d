@@ -12,4 +12,9 @@ I use a subset of 20 point cloud files for this course.
 The course is currently being completed by using the dockerfile from this repository here: [My Open3D Dockerfile](https://github.com/raghavduddala/3d-obstacle-detection)
 
 ## RESULTS
+### Downsampled KITTI PCD 
+![downsampled_pcd](https://user-images.githubusercontent.com/12818429/195917807-44c000c8-c98b-4568-ab5f-a06a15528374.png)
+### Segmentation of the Ground Plane
 ![Ground_plane_segmentation_kitti_dist_0 1](https://user-images.githubusercontent.com/12818429/195545980-a079ef8c-0027-4780-af7f-a60c21ef300d.png)
+### Clustering of detected objects 
+![dbscan_clustering](https://user-images.githubusercontent.com/12818429/195917939-e9f87534-13c4-47f7-9ecd-0a23b5269621.png)
