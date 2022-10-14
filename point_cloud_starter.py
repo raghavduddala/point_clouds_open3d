@@ -47,10 +47,21 @@ outlier_cloud = pcd.select_by_index(inliers, invert=True)
 outlier_cloud.paint_uniform_color([1, 0, 0])
 o3d.visualization.draw_geometries([inlier_cloud, outlier_cloud])
 
-# ## CHALLENGE 4 - CLUSTERING USING DBSCAN
-# labels =
-# max_label= labels.max()
-# print(f"point cloud has {max_label + 1} clusters")
+## CHALLENGE 4 - CLUSTERING USING DBSCAN
+# 0.35 and 20 has some good
+# labels is an array of the classes assigned to all the
+# The max gives the total number of labels/clusters assigned including the "-1" for outliers
+# So total clusters = labels.max() + 1
+# and each cluster is assigned a color based on the cluster label for each point
+# and for the points where label =-1 ,i.e the outliers, the color is black
+# the colors array is then reshaped to 3D vector and converted back to the PCD
+labels = np.array(pcd.cluster_dbscan(eps=0.35, min_points=30, print_progress=True))
+max_label = labels.max()
+print(f"point cloud has {max_label + 1} clusters")
+colors = plt.get_cmap("tab20")(labels / (max_label) if max_label > 0 else 1)
+colors[labels < 0] = 0
+pcd.colors = o3d.utility.Vector3dVector(colors[:, :3])
+o3d.visualization.draw_geometries([pcd])
 
 # ## BONUS CHALLENGE - CLUSTERING USING KDTREE AND KNN INSTEAD
 # pcd_tree =
