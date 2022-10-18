@@ -18,3 +18,7 @@ The course is currently being completed by using the dockerfile from this reposi
 ![Ground_plane_segmentation_kitti_dist_0 1](https://user-images.githubusercontent.com/12818429/195545980-a079ef8c-0027-4780-af7f-a60c21ef300d.png)
 ### Clustering of detected objects 
 ![dbscan_clustering](https://user-images.githubusercontent.com/12818429/195917939-e9f87534-13c4-47f7-9ecd-0a23b5269621.png)
+
+### Bounding Boxes of the detected objects 
+The bounding boxes are drawn using the point cloud indices that are labelled into similar clusters from the DBSCAN Algorithm using PCA from open3d
+![Bounding_boxes_clustered_objects](https://user-images.githubusercontent.com/12818429/196366344-232f8125-60bb-4319-89da-9ddf489bde33.png)
