@@ -34,7 +34,8 @@ print(f"Points before downsampling: {len(pcd.points)} ")
 # Some possibility that we might miss small obstacles at distance to the LiDAR,
 pcd = pcd.voxel_down_sample(voxel_size=0.05)
 print(f"Points after downsampling: {len(pcd.points)}")  # DOWNSAMPLING
-print(np.asarray(pcd.points))
+# points_3d = np.asarray(pcd.points)
+# print(points_3d.shape)
 # o3d.visualization.draw_geometries([pcd])
 
 # ## CHALLENGE 3 - SEGMENTATION
@@ -56,6 +57,7 @@ o3d.visualization.draw_geometries([inlier_cloud, outlier_cloud])
 # and for the points where label =-1 ,i.e the outliers, the color is black
 # the colors array is then reshaped to 3D vector and converted back to the PCD
 labels = np.array(pcd.cluster_dbscan(eps=0.35, min_points=30, print_progress=True))
+print(labels)
 max_label = labels.max()
 print(f"point cloud has {max_label + 1} clusters")
 colors = plt.get_cmap("tab20")(labels / (max_label) if max_label > 0 else 1)
@@ -67,9 +69,45 @@ o3d.visualization.draw_geometries([pcd])
 # pcd_tree =
 
 # ## CHALLENGE 5 - BOUNDING BOXES IN 3D
+points_3d = np.asarray(pcd.points)
+# Size of pcd.points = (84500,3)
+# Size of labels = (84500,)
+# Making use of the pandas dataframe as it comes with open3d to find out the indices of the object
+# We need to find the indices of point clouds with same labels grouped togther
+# groupby.apply() gives the labels and their list of indices as a dictionary key and pair
+# indices will be a list of list with the indices of the point clouds w.r.t labels
+# appending the bounding box in the loop and not the point cloud points as they will be already present
+# Setting a threshold will be good for the number of point clouds to avoid unnecessary bounding boxes
+indices = pd.Series(range(len(labels))).groupby(labels, sort=False).apply(list).tolist()
+bboxes = []
+POINTS_MIN_THRESHOLD = 30
+POINTS_MAX_THRESHOLD = 650
+
+for i in range(len(indices)):
+    object_pcd = pcd.select_by_index(indices[i])
+    points_object_pcd = len(np.array(object_pcd.points))
+    if (
+        points_object_pcd > POINTS_MIN_THRESHOLD
+        and points_object_pcd < POINTS_MAX_THRESHOLD
+    ):
+        bbox = object_pcd.get_axis_aligned_bounding_box()
+        bbox.color = (0, 0, 0)
+        bboxes.append(bbox)
+
+pcd_bbox = []
+pcd_bbox.append(pcd)
+pcd_bbox.extend(bboxes)
+o3d.visualization.draw_geometries(pcd_bbox)
+
+# labels = np.reshape(())
+
+# for i in range(len()
+# list_pcd = np.asarray(pcd.)
+# print(list_pcd)
 # bounding_boxes =
 
 # ## CHALLENGE 6 - VISUALIZE THE FINAL RESULTS
 # list_of_visuals =
 
 # ## BONUS CHALLENGE 2 - MAKE IT WORK ON A VIDEO
+
